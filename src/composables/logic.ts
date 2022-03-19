@@ -177,4 +177,38 @@ export class GamePlay {
         }
       })
   }
+
+  autoExpand(block: BlockState) {
+    if (this.state.value.status !== 'play' || block.flagged)
+      return
+
+    const siblings = this.getSiblings(block)
+    const flags = siblings.reduce((a, b) => a + (b.flagged ? 1 : 0), 0)
+    const notRevealed = siblings.reduce((a, b) => a + (!b.revealed && !b.flagged ? 1 : 0), 0)
+    if (flags === block.adjacentMines) {
+      siblings.forEach((i) => {
+        if (i.revealed || i.flagged)
+          return
+        i.revealed = true
+        this.expendZero(i)
+        if (i.mine)
+          this.onGameOver('lost')
+      })
+    }
+    const missingFlags = block.adjacentMines - flags
+    if (notRevealed === missingFlags) {
+      siblings.forEach((i) => {
+        if (!i.revealed && !i.flagged)
+          i.flagged = true
+      })
+    }
+  }
+
+  onRightClick(block: BlockState) {
+    if (this.state.value.status !== 'play')
+      return
+    if (block.revealed)
+      return
+    block.flagged = !block.flagged
+  }
 }
