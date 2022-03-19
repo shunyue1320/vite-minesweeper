@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { BlockState } from '~/types'
-// import { isDev } from '~/composables'
+import { isDev } from '~/composables'
 
 defineProps<{ block: BlockState }>()
 
@@ -33,10 +33,10 @@ function getBlockClass(block: BlockState) {
     flex="~"
     items-center justify-center
     min-w-8 min-h-8 m="1px"
-    border="0.5 gray-400/10"
+    border="0.5 gray-400/30"
+    :class="getBlockClass(block)"
   >
-  <!-- :class="getBlockClass(block)" -->
-    <!-- <template v-if="block.flagged">
+    <template v-if="block.flagged">
       <div i-mdi-flag text-red />
     </template>
     <template v-else-if="block.revealed || isDev">
@@ -44,6 +44,6 @@ function getBlockClass(block: BlockState) {
       <div v-else font-600>
         {{ block.adjacentMines }}
       </div>
-    </template> -->
+    </template>
   </button>
 </template>
