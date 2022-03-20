@@ -38,8 +38,15 @@ function newGame(difficulty: 'easy' | 'medium' | 'hard') {
   }
 }
 
+const customModel = reactive({
+  customRow: 6,
+  customCol: 6,
+  mineNum: 3,
+  show: false,
+})
 function custom() {
-
+  play.reset(customModel.customCol, customModel.customRow, customModel.mineNum)
+  customModel.show = false
 }
 
 watchEffect(() => {
@@ -55,12 +62,12 @@ watchEffect(() => {
         扫雷
       </div>
       <div font-mono flex="~ gap-2" items-center>
-        <div i-mdi-mine />
-        {{ mineRest }}
-      </div>
-      <div font-mono flex="~ gap-2" items-center>
         <div i-carbon-timer />
         {{ timerMS }}
+      </div>
+      <div font-mono flex="~ gap-2" items-center>
+        <div i-mdi-mine />
+        {{ mineRest }}
       </div>
     </div>
     <div flex="~ gap-1" justify-center p4>
@@ -76,8 +83,20 @@ watchEffect(() => {
       <button btn @click="newGame('hard')">
         困难
       </button>
-      <button btn @click="custom">
+      <button btn @click="customModel.show = !customModel.show">
         自定义
+      </button>
+    </div>
+
+    <div v-if="customModel.show" flex="~ gap-1" justify-center items-center p4>
+      <span>行</span>
+      <input v-model.number="customModel.customRow" w-15>
+      <span>列</span>
+      <input v-model.number="customModel.customCol" w-15>
+      <span>炸弹</span>
+      <input v-model.number="customModel.mineNum" w-15>
+      <button btn @click="custom">
+        确定
       </button>
     </div>
 
@@ -91,6 +110,8 @@ watchEffect(() => {
           v-for="block, x in row" :key="x"
           :block="block"
           @click="play.onClick(block)"
+          @dblclick="play.autoExpand(block)"
+          @contextmenu.prevent="play.onRightClick(block)"
         />
       </div>
     </div>
